@@ -3,30 +3,42 @@ syntax = "proto3";
 package family;
 
 option java_multiple_files = true;
-option java_package = "family";
+option java_package = "com.example.family";
 option java_outer_classname = "FamilyProto";
 
-message NodeInfo {
+service FamilyService {
+  rpc joinFamily (JoinRequest) returns (JoinResponse);
+  rpc store (StoredMessage) returns (StoreResult);
+  // YENİ EKLENEN: Veri okuma isteği
+  rpc getValue (GetValueRequest) returns (GetValueResponse);
+}
+
+message JoinRequest {
   string host = 1;
   int32 port = 2;
 }
 
-message FamilyView {
-  repeated NodeInfo members = 1;
+message JoinResponse {
+  bool success = 1;
+  string message = 2;
 }
 
-message Empty {}
-
-message ChatMessage {
-  string text = 1;
-  string fromHost = 2;
-  int32 fromPort = 3;
-  int64 timestamp = 4;
+message StoredMessage {
+  int32 id = 1;
+  string data = 2;
 }
 
-service FamilyService {
-  rpc Join (NodeInfo) returns (FamilyView);
-  rpc GetFamily (Empty) returns (FamilyView);
+message StoreResult {
+  bool success = 1;
+  string message = 2;
+}
 
-  rpc ReceiveChat (ChatMessage) returns (Empty);
+// YENİ MESAJ TİPLERİ
+message GetValueRequest {
+  int32 id = 1;
+}
+
+message GetValueResponse {
+  bool found = 1;
+  string data = 2;
 }

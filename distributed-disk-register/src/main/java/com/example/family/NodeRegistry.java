@@ -1,29 +1,25 @@
 package com.example.family;
 
-import family.NodeInfo;
-
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class NodeRegistry {
+    private final List<NodeInfo> nodes = Collections.synchronizedList(new ArrayList<>());
 
-    private final Set<NodeInfo> nodes = ConcurrentHashMap.newKeySet();
-
-    public void add(NodeInfo node) {
+    public void addNode(NodeInfo node) {
+        // Zaten varsa ekleme
+        for (NodeInfo n : nodes) {
+            if (n.getPort() == node.getPort()) return;
+        }
         nodes.add(node);
     }
 
-    public void addAll(Collection<NodeInfo> others) {
-        nodes.addAll(others);
+    public void removeNode(NodeInfo node) {
+        nodes.removeIf(n -> n.getPort() == node.getPort());
     }
 
-    public List<NodeInfo> snapshot() {
-        return List.copyOf(nodes);
-    }
-
-    public void remove(NodeInfo node) {
-        nodes.remove(node);
+    public List<NodeInfo> getNodes() {
+        return new ArrayList<>(nodes); // Kopya döndür (Güvenlik için)
     }
 }
